@@ -260,4 +260,66 @@ footer {
         margin-bottom: 10px;
         text-align: center;
     }
+
+    /* --- Services Section Specific Styles (Matching Toriqul Tonu's Layout) --- */
+
+#services {
+    text-align: center;
+    padding: 100px 0;
+}
+
+#services h2 {
+    color: var(--color-accent); /* Cyan */
+    font-size: 2.5em;
+    margin-bottom: 50px;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    text-align: left;
+}
+
+.service-card {
+    background-color: #1a1a1a; /* Slightly lighter black/dark gray */
+    padding: 40px 30px;
+    border-radius: 10px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    border-top: 3px solid transparent; /* Subtle design element */
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    background-color: #222;
+    border-top-color: var(--color-accent); /* Cyan hover highlight */
+}
+
+.service-card .icon {
+    font-size: 2.5em;
+    color: var(--color-accent);
+    margin-bottom: 15px;
+    /* You would typically use an icon library (Font Awesome) here */
+}
+
+.service-card h3 {
+    color: var(--color-text);
+    font-size: 1.4em;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.service-card p {
+    color: var(--color-secondary-text);
+    font-size: 0.95em;
+}
+
+/* Mobile Responsiveness for Services */
+@media (max-width: 768px) {
+    .service-card {
+        padding: 30px 20px;
+    }
+}
 }
