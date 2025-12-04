@@ -1,0 +1,263 @@
+/*
+ * Minimalist Black Theme for Fahim Muntasir Moumit Portfolio
+ * Mobile Responsive CSS
+ */
+
+:root {
+    --color-background: #000000;
+    --color-text: #EAEAEA; /* Light Gray for readability */
+    --color-accent: #00FFFF; /* Vibrant Cyan */
+    --color-secondary-text: #A0A0A0;
+}
+
+body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Global Typography & Links */
+h1, h2, h3 {
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #00BFFF; /* Slightly darker cyan on hover */
+}
+
+/* Header & Navigation */
+header {
+    background-color: var(--color-background);
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1a1a1a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--color-accent);
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 25px;
+}
+
+nav ul a {
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+/* Utility Class for Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--color-accent);
+    color: var(--color-background); /* Black text on Cyan background */
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background-color: #00BFFF;
+}
+
+/* Main Content Layout */
+.container {
+    padding: 0 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+section {
+    padding: 80px 0;
+    border-bottom: 1px solid #111;
+}
+
+/* Hero Section */
+#home {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+#home h1 {
+    font-size: 3em;
+    margin-bottom: 0;
+}
+
+#home h2 {
+    color: var(--color-accent);
+    font-size: 1.5em;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    letter-spacing: 5px;
+}
+
+#home p {
+    font-size: 1.1em;
+    max-width: 700px;
+}
+
+/* Skills Section */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.skill-category {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 5px;
+    border-left: 3px solid var(--color-accent);
+}
+
+.skill-category h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: var(--color-accent);
+}
+
+.skill-category p {
+    color: var(--color-secondary-text);
+}
+
+/* Projects Section */
+.project-card {
+    background-color: #111;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    border: 1px solid #333;
+}
+
+.project-card h3 {
+    color: var(--color-accent);
+}
+
+.project-meta {
+    font-size: 0.9em;
+    color: var(--color-secondary-text);
+    margin-bottom: 15px;
+}
+
+.project-buttons a {
+    margin-right: 15px;
+}
+
+/* Blog Section (Jekyll Specific styles for posts will be minimal) */
+/* This is styled assuming Jekyll will generate post lists and pages */
+.post-listing a {
+    display: block;
+    background-color: #111;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 3px solid var(--color-secondary-text);
+    transition: border-left 0.3s ease;
+}
+
+.post-listing a:hover {
+    border-left: 3px solid var(--color-accent);
+}
+
+.post-date {
+    font-size: 0.8em;
+    color: var(--color-secondary-text);
+    display: block;
+    margin-top: 5px;
+}
+
+/* Contact Section */
+.contact-info p {
+    margin: 10px 0;
+}
+
+.social-links a {
+    font-size: 1.5em;
+    margin-right: 20px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px 5%;
+    font-size: 0.8em;
+    color: var(--color-secondary-text);
+    border-top: 1px solid #111;
+}
+
+
+/* ----------------------------------
+ * MOBILE RESPONSIVENESS (Max 768px)
+ * ---------------------------------- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 5%;
+    }
+
+    nav {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+
+    #home h1 {
+        font-size: 2.5em;
+    }
+
+    #home h2 {
+        font-size: 1.2em;
+        letter-spacing: 3px;
+    }
+
+    section {
+        padding: 50px 0;
+    }
+
+    .project-buttons a {
+        display: block;
+        margin-right: 0;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+}

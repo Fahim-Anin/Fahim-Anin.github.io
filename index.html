@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site.title }} - Portfolio</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">FMM.DEV</div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        
+        <section id="home">
+            <div>
+                <h1>Fahim Muntasir Moumit</h1>
+                <h2>Innovative Full Stack Developer</h2>
+                <p>
+                    Expertise in back-end frameworks such as **Node.js, Django, and Spring Boot**, as well as modern front-end technologies including **React**. 
+                    [cite_start]Skilled in database design, automation, version control, and DevOps practices[cite: 8, 9]. 
+                    [cite_start]Dedicated to delivering impactful technological solutions[cite: 10, 11].
+                </p>
+                <a href="#projects" class="btn">View My Projects</a>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Languages</h3>
+                    [cite_start]<p>Java, C, C++, Python, JavaScript [cite: 42]</p>
+                </div>
+                <div class="skill-category">
+                    <h3>Frameworks & Technologies</h3>
+                    [cite_start]<p>Springboot, JPA, Hibernate, React JS, Django, Selenium, PyTorch [cite: 44, 45]</p>
+                </div>
+                <div class="skill-category">
+                    <h3>Databases</h3>
+                    [cite_start]<p>PostgreSQL, MySQL, MongoDB [cite: 46]</p>
+                </div>
+                <div class="skill-category">
+                    <h3>Cloud & DevOps</h3>
+                    [cite_start]<p>EC2, Route S3, AWS Lambda, Docker, Git [cite: 47, 48]</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>Featured Projects</h2>
+            <div class="project-card">
+                <h3>Student Management System</h3>
+                [cite_start]<p>A comprehensive system designed to manage student information, including enrollment, attendance, grades, and administrative functionalities[cite: 18, 19].</p>
+                [cite_start]<div class="project-meta">Technology: Django, PostgreSQL, Docker, Nginx, Gunicorn [cite: 21]</div>
+                <div class="project-buttons">
+                    <a href="https://github.com/your_github_username/Management_System" class="btn" target="_blank">GitHub Link</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3>E-Commerce Web Application (DeshDeal)</h3>
+                [cite_start]<p>A feature-rich e-commerce web application built using Spring Boot and Thymeleaf[cite: 24, 25].</p>
+                [cite_start]<div class="project-meta">Technology: Java, SpringBoot, Thymeleaf, Hibernate (H2 Database) [cite: 27, 28]</div>
+                <div class="project-buttons">
+                    <a href="https://github.com/your_github_username/E-Commerce" class="btn" target="_blank">GitHub Link</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <h3>Medical Health Consumer Project</h3>
+                [cite_start]<p>An ML model which predicts the medical health product rating[cite: 39].</p>
+                [cite_start]<div class="project-meta">Technology: Python, Pytorch [cite: 40]</div>
+                <div class="project-buttons">
+                    <a href="https://github.com/your_github_username/Medical_Health" class="btn" target="_blank">GitHub Link</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="blog">
+            <h2>My Learnings (Blog)</h2>
+            <p>Here are my latest posts and notes on what I am continuously learning:</p>
+            <div class="post-listing">
+                {% for post in site.posts limit: 5 %}
+                    <a href="{{ post.url | relative_url }}">
+                        <strong>{{ post.title }}</strong>
+                        <span class="post-date">{{ post.date | date: "%B %-d, %Y" }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+            <a href="/blog" class="btn" style="background-color: transparent; border: 1px solid var(--color-accent);">View All Posts</a>
+        </section>
+
+        <section id="contact">
+            <h2>Get In Touch</h2>
+            <div class="contact-info">
+                [cite_start]<p>Email: <a href="mailto:{{ site.email }}">{{ site.email }}</a> [cite: 2]</p>
+                [cite_start]<p>Phone: {{ site.data.contact.phone }} [cite: 5]</p>
+                [cite_start]<p>Location: Dhaka, Bangladesh [cite: 3]</p>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://github.com/your_github_username" target="_blank">GitHub</a> |
+                <a href="https://linkedin.com/in/your_linkedin_profile" target="_blank">LinkedIn</a> |
+                <a href="/assets/Fahim-Muntasir-Moumit_Resume.pdf" class="btn" download>Download CV (PDF)</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Fahim Muntasir Moumit. Built with Jekyll and Hosted on GitHub Pages.</p>
+    </footer>
+
+</body>
+</html>
