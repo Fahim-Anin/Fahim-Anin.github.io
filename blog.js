@@ -1,0 +1,127 @@
+import React from 'react';
+
+// === Blog Post Data ===
+// Add your new learning entries here!
+// The 'content' is an array of strings, where each string will be a new paragraph.
+const postsData = [
+  {
+    id: 1,
+    title: "Understanding React Hooks: useState and useEffect",
+    date: "November 25, 2025",
+    tags: ["React", "JavaScript", "Front-end"],
+    content: [
+      "I finally feel like I have a solid grasp on the core React Hooks. The `useState` hook is essential for managing local component state, allowing functional components to be stateful. It returns an array: the current state value and a function to update it.",
+      "The `useEffect` hook, however, was trickier. It's used for 'side effects' like data fetching, subscriptions, or manually changing the DOM. The key takeaway is understanding the dependency array: an empty array `[]` means it runs once on mount, and including variables means it runs when those variables change.",
+      "This pattern drastically cleans up components compared to class components. The separation of concerns between state (`useState`) and side effects (`useEffect`) makes the logic much easier to follow and test."
+    ],
+  },
+  {
+    id: 2,
+    title: "Introduction to Tailwind CSS Utility-First Approach",
+    date: "November 20, 2025",
+    tags: ["CSS", "Design"],
+    content: [
+      "I started experimenting with Tailwind CSS this week, and the utility-first approach is incredibly fast for prototyping. Instead of writing custom CSS classes like `.card-title`, you compose styles directly in your HTML with classes like `text-xl font-bold text-gray-800`.",
+      "The learning curve is mainly memorizing the class names, but the consistency across spacing, colors, and typography ensures a professional look without much effort. It enforces good design constraints.",
+      "Responsive design is also seamless using prefixes like `sm:`, `md:`, and `lg:`. This allows me to easily define different layouts for mobile and desktop, ensuring the blog looks great everywhere."
+    ],
+  },
+  {
+    id: 3,
+    title: "Setting up a Simple Node.js Server",
+    date: "November 15, 2025",
+    tags: ["Node.js", "Back-end"],
+    content: [
+      "My first step into the back-end world was setting up a simple server using Node.js and Express. It's surprisingly straightforward. The basic setup involves requiring the `express` library and defining routes.",
+      "I learned about middleware and how it intercepts requests before they hit the final route handler. This is where things like logging, authentication, and body parsing happen. For a blog, this would be crucial for handling submissions and storing data (though for this template, we are using local data).",
+      "Next week, I plan to explore connecting this simple server to a database to make the posts dynamic!"
+    ],
+  },
+];
+
+// === Utility Components ===
+
+// Component to display a single blog post
+const BlogPost = ({ post }) => {
+  return (
+    <div className="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 mb-8 border border-gray-100">
+      <header className="mb-4 border-b pb-3">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-2 leading-tight">
+          {post.title}
+        </h2>
+        <p className="text-sm text-indigo-600 font-medium">
+          Published on {post.date}
+        </p>
+      </header>
+
+      {/* Main Content Area - maps the array of strings to <p> tags */}
+      <section className="space-y-5 text-gray-700 leading-relaxed text-lg">
+        {post.content.map((paragraph, index) => (
+          // Use index as a key for this simple scenario
+          <p key={index}>
+            {paragraph}
+          </p>
+        ))}
+      </section>
+
+      {/* Tags */}
+      <footer className="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
+        {post.tags.map((tag, index) => (
+          <span
+            key={index}
+            className="px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-full"
+          >
+            #{tag}
+          </span>
+        ))}
+      </footer>
+    </div>
+  );
+};
+
+// === Main App Component ===
+const App = () => {
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans antialiased">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>{`
+        /* Load Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+      `}</style>
+      
+      {/* Header */}
+      <header className="bg-indigo-700 shadow-lg sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            My Learning Journal
+          </h1>
+          <p className="text-indigo-200 text-sm mt-1">
+            Documenting my journey one concept at a time.
+          </p>
+        </div>
+      </header>
+
+      {/* Main Content Area (Blog List) */}
+      <main className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h2 className="text-4xl font-extrabold text-gray-800 mb-10 border-b-4 border-indigo-500 inline-block pb-1">
+          Latest Concepts
+        </h2>
+
+        {/* List of Posts */}
+        <div className="divide-y divide-gray-200">
+          {postsData.map((post) => (
+            <BlogPost key={post.id} post={post} />
+          ))}
+        </div>
+        
+        {/* Footer */}
+        <footer className="mt-12 text-center text-gray-500 text-sm py-4 border-t">
+            <p>&copy; 2025 Learning Journal. Built with React and Tailwind CSS.</p>
+        </footer>
+      </main>
+    </div>
+  );
+};
+
+export default App;
