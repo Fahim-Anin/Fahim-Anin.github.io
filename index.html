@@ -197,6 +197,100 @@
                     { type: 'conclusion', text: "✅ Conclusion: Understanding this lifecycle helps you debug, optimize, and design Django applications more effectively. It also shows why Django separates responsibilities: server/transport (**WSGI**), routing (**URL dispatcher**), processing (**views**), and data (**models**)." }
                 ],
             },
+            {
+    id: 2,
+    title: "Django Models & Migrations — The Complete Beginner-Friendly Guide",
+    date: "November 28, 2025",
+    tags: ["Django", "Models", "Migrations"],
+    content: [
+        { type: 'paragraph', text: "When you build any Django application that works with data, you will interact with **models** and **migrations**. These two concepts form the backbone of Django’s ORM (Object-Relational Mapping). In this guide, you'll learn what happens when you extend **models.Model**, how Django understands your model, and how migrations convert your Python class into real SQL tables." },
+
+        { type: 'h2', text: "1️⃣ What Happens When You Write `models.Model`?" },
+        { type: 'paragraph', text: "Whenever you define a model like this:" },
+        { type: 'code_block', text: "class Student(models.Model):\n    name = models.CharField(max_length=100)\n    age = models.IntegerField()" },
+
+        { type: 'paragraph', text: "`models.Model` is the **parent class** for all Django models. By inheriting from it, your class becomes a fully-featured database model." },
+
+        { type: 'h3', text: "Step 1: Your class becomes a Django database model" },
+        { type: 'paragraph', text: "Because it extends `models.Model`, Django now treats your class as something that will map directly to a table in the database." },
+        { type: 'key_insight', text: "If you do NOT inherit `models.Model`, Django will ignore the class completely — it won't become a table." },
+
+        { type: 'h3', text: "Step 2: Django collects field information" },
+        { type: 'paragraph', text: "Every field you write (`CharField`, `IntegerField`, etc.) becomes a **column** in the database table." },
+        { type: 'code_block', text: "name → VARCHAR(100)\nage → INTEGER" },
+
+        { type: 'h3', text: "Step 3: Django adds automatic fields" },
+        { type: 'list', text: "An automatic primary key: `id`" },
+        { type: 'list', text: "Internal metadata" },
+        { type: 'list', text: "Built-in methods (save(), delete(), objects.create(), etc.)" },
+
+        { type: 'important', text: "Django adds a hidden `id` column even if you don’t create it manually." },
+
+        { type: 'h3', text: "Step 4: ORM features become available" },
+        { type: 'paragraph', text: "Because your class now inherits from `models.Model`, you can do things like:" },
+        { type: 'code_block', text: "Student.objects.all()\nStudent.objects.filter(age=20)\nStudent.objects.create(name=\"Alice\", age=22)" },
+
+        { type: 'key_point', text: "Django models are Python classes, but they behave like database tables because of `models.Model`." },
+
+        { type: 'h2', text: "2️⃣ What Are Migrations?" },
+        { type: 'paragraph', text: "Migrations are Django’s system for turning Python model definitions into **real database tables**. They work like version control for your database schema." },
+
+        { type: 'h3', text: "Why do we need migrations?" },
+        { type: 'list', text: "To create tables" },
+        { type: 'list', text: "To update columns" },
+        { type: 'list', text: "To rename fields" },
+        { type: 'list', text: "To delete fields" },
+
+        { type: 'key_insight', text: "Whenever your models change, your database must change too — migrations keep them in sync." },
+
+        { type: 'h2', text: "3️⃣ How Migration Works (Step-by-Step)" },
+        { type: 'paragraph', text: "Let’s understand the internal flow of migrations in Django." },
+
+        { type: 'h3', text: "Step 1: You change or add a model" },
+        { type: 'paragraph', text: "Example: You add a new field to Student:" },
+        { type: 'code_block', text: "class Student(models.Model):\n    name = models.CharField(max_length=100)\n    age = models.IntegerField()\n    email = models.EmailField(default=\"test@example.com\")" },
+
+        { type: 'h3', text: "Step 2: Django detects changes" },
+        { type: 'code_block', text: "python manage.py makemigrations" },
+        { type: 'paragraph', text: "Django compares your model definitions with the last migration file and generates a new migration script." },
+
+        { type: 'important', text: "Migration files are Python files stored inside migrations/ folder of each app." },
+
+        { type: 'code_block', text: "0002_add_email_to_student.py" },
+
+        { type: 'h3', text: "Step 3: Django creates SQL behind the scenes" },
+        { type: 'paragraph', text: "Each migration file contains Python instructions, but internally Django translates them into SQL like:" },
+        { type: 'code_block', text: "ALTER TABLE app_student ADD COLUMN email VARCHAR(254) DEFAULT 'test@example.com';" },
+
+        { type: 'flow', text: "models.py → makemigrations → migration files → migrate → SQL → database" },
+
+        { type: 'h3', text: "Step 4: Applying migrations" },
+        { type: 'code_block', text: "python manage.py migrate" },
+        { type: 'paragraph', text: "This command executes SQL commands inside migration files and updates your actual database." },
+
+        { type: 'important', text: "Your database is NOT changed until you run `migrate`." },
+
+        { type: 'h2', text: "4️⃣ TL;DR — Simple Summary" },
+        { type: 'list', text: "`models.Model` → turns your class into a database-aware model." },
+        { type: 'list', text: "`makemigrations` → creates migration files (Python → SQL plan)." },
+        { type: 'list', text: "`migrate` → applies SQL to the real database." },
+        { type: 'list', text: "Fields become columns, models become tables." },
+
+        { type: 'golden_rule', text: "Models define the structure. Migrations apply the structure to the database." },
+
+        { type: 'h2', text: "5️⃣ Analogy: Models & Migrations in Real Life" },
+        { type: 'paragraph', text: "Think of Django models and migrations like constructing a building:" },
+        { type: 'list', text: "Model = blueprint of the building" },
+        { type: 'list', text: "Migration = construction instructions" },
+        { type: 'list', text: "Database = actual building" },
+        { type: 'paragraph', text: "Whenever you change the blueprint, you must update the building — that’s exactly what migrations do." },
+
+        { type: 'conclusion', text: "Understanding models and migrations is essential for mastering Django. They allow your Python code and database to work together seamlessly. Once you understand this flow, building database-driven applications becomes natural and intuitive." }
+    ]
+},
+
+
+
         ];
 
         // Component to display a single blog post
