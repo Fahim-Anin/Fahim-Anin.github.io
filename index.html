@@ -24,11 +24,13 @@
         // Helper component to render content based on type
         const ContentRenderer = ({ contentItem }) => {
             // Added check to ensure text exists to prevent crash
-            const { type, text } = contentItem;
-            if (!text) {
-                console.error("ContentRenderer item is missing text property:", contentItem);
-                return null; 
+            // Also handles the new question_answer structure
+            if (!contentItem || (!contentItem.text && contentItem.type !== 'question_answer')) {
+                console.error("ContentRenderer item is missing required properties:", contentItem);
+                return null;
             }
+            
+            const { type, text } = contentItem;
 
             switch (type) {
                 // Major Section Headings (1, 2, 3...)
@@ -40,6 +42,15 @@
                 case 'h3':
                     return <h4 className="text-xl font-bold text-indigo-700 mt-4 mb-2">{text}</h4>;
                 
+                // Question/Answer Block (NEW: Added to handle Q/A structure)
+                case 'question_answer':
+                    return (
+                        <div className="p-4 my-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg shadow-sm">
+                            <h4 className="text-xl font-extrabold text-yellow-800 mb-2">Q: {contentItem.question_text}</h4>
+                            <p className="text-gray-700 leading-relaxed text-lg">{contentItem.text}</p>
+                        </div>
+                    );
+
                 // Highlighted HTTP Request Line (Green Banner)
                 case 'request':
                     return (
@@ -628,18 +639,6 @@
         "text": "**`.exists()`:** The method that finally executes the query against the database."
       },
       {
-        "type": "h3",
-        "text": "The Optimized SQL Behind the Scenes"
-      },
-      {
-        "type": "paragraph",
-        "text": "The ORM optimizes `.exists()` to only fetch the minimum data required. It translates to highly optimized SQL that stops after finding the first match:"
-      },
-      {
-        "type": "code_block",
-        "text": "SELECT (1) FROM auth_user WHERE username='john' LIMIT 1;"
-      },
-      {
         "type": "key_insight",
         "text": "By adding `LIMIT 1`, the database avoids scanning the entire table, making this check extremely fast. The result is converted simply to a Python `True` or `False`."
       },
@@ -665,27 +664,31 @@
       },
       {
         "type": "list",
-        "text": "2. **Redirect:** `redirect('/register')` sends an HTTP 302 response, telling the browser to make a new GET request for the registration page."
+        "text": "2. **Redirect:** `redirect('/register')` sends an **HTTP 302** status code. The browser is instructed to immediately send a new **GET** request to the `/register` URL."
       },
       {
         "type": "h3",
-        "text": "Phase B: Displaying and Deleting the Message"
+        "text": "Phase B: Displaying and Consuming the Message"
       },
       {
         "type": "list",
-        "text": "1. **Request:** The browser sends the GET request, including the **Session Cookie**."
+        "text": "3. **New GET Request:** The browser loads the registration page again."
       },
       {
         "type": "list",
-        "text": "2. **Middleware:** Django's `MessageMiddleware` reads the session data and attaches the message ('Username is taken') to the `request.context`."
+        "text": "4. **Middleware Action:** The **`MessageMiddleware`** intercepts this request, finds the stored messages in the session, and attaches them to the `request` object's **context**."
       },
       {
         "type": "list",
-        "text": "3. **Template:** The registration template iterates over the messages in the context and displays them."
+        "text": "5. **Template Rendering:** The template code (`{% for message in messages %}`) loops through the messages provided by the Middleware and renders them as HTML."
       },
       {
         "type": "list",
-        "text": "4. **Removal:** Crucially, the message is **immediately deleted** from the session data after it is attached to the context (preventing the message from appearing on every subsequent page until a duplicate username error)."
+        "text": "6. **Consumption:** Immediately after the messages are pulled for rendering, the MessageMiddleware automatically **deletes** them from the session, ensuring they only appear once."
+      },
+      {
+        "type": "important",
+        "text": "The PRG pattern prevents the user from accidentally submitting the form twice if they refresh the page (which would cause a duplicate username error)."
       },
       {
         "type": "flow",
@@ -717,113 +720,41 @@
       },
       {
         "type": "h2",
-        "text": "1️⃣ Why use `django.contrib.auth`?"
-      },
-      {
-        "type": "list",
-        "text": "It’s the most complex component in any web app: **Authentication**."
-      },
-      {
-        "type": "list",
-        "text": "It handles secure password hashing, user registration, permissions, and session management."
-      },
-      {
-        "type": "list",
-        "text": "It uses the Django **Session Middleware** and **Authentication Middleware** to manage state across requests."
-      },
-      {
-        "type": "key_point",
-        "text": "The `auth` module simplifies security, handles strong password hashing and secure sessions, and provides standard user management. Without `auth`, you’d need to write your own login, password hashing, and session management — which is error-prone and insecure."
-      },
-      {
-        "type": "h2",
-        "text": "3️⃣ Step 1: User presses login button"
+        "text": "1️⃣ What is `auth` in Django?"
       },
       {
         "type": "paragraph",
-        "text": "Your login form collects username and password, adds the CSRF token, and sends a POST request to the server:"
+        "text": "`auth` is Django’s built-in authentication framework (`django.contrib.auth`). It handles user login, logout, password hashing, sessions, and permissions."
       },
       {
-        "type": "code_block",
-        "text": "<form method='post' action='/login/'>\n {% csrf_token %}\n <input type='text' name='username'>\n <input type='password' name='password'>\n <input type='submit'>\n</form>"
+        "type": "list",
+        "text": "**User Model** → stores username, email, hashed password, and permissions"
+      },
+      {
+        "type": "list",
+        "text": "**Authentication Functions** → `authenticate()`, `login()`, `logout()`"
+      },
+      {
+        "type": "list",
+        "text": "**Password Management** → `set_password()` hashes passwords securely, `check_password()` validates them"
+      },
+      {
+        "type": "list",
+        "text": "**Sessions** → keeps users logged in across requests"
+      },
+      {
+        "type": "list",
+        "text": "**Permissions & Groups** → controls access and roles"
       },
       {
         "type": "h2",
-        "text": "4️⃣ Step 2: Django receives POST request"
-      },
-      {
-        "type": "list",
-        "text": "WSGI translates the raw HTTP request into the Python **`HttpRequest`** object."
-      },
-      {
-        "type": "list",
-        "text": "Middleware checks the CSRF token and processes any existing session cookie."
-      },
-      {
-        "type": "list",
-        "text": "URL Dispatcher routes the request to your `login_view` function."
-      },
-      {
-        "type": "h2",
-        "text": "5️⃣ Step 3: `auth.authenticate()` Verifies Credentials"
+        "text": "2️⃣ Why `auth` is important"
       },
       {
         "type": "paragraph",
-        "text": "This function is the **verification engine**. You pass it the plaintext username and password from the POST request:"
-      },
-      {
-        "type": "code_block",
-        "text": "user = auth.authenticate(request, username=username, password=password)"
-      },
-      {
-        "type": "list",
-        "text": "1. **DB Lookup:** It uses the ORM to find the user in the `auth_user` table using the `username`."
-      },
-      {
-        "type": "list",
-        "text": "2. **Password Comparison:** It takes the submitted **plaintext password**, re-hashes it using the same algorithm used for storage, and compares the new hash against the stored hash in the database."
-      },
-      {
-        "type": "important",
-        "text": "If the hashes match, it returns the `User` object. If they do not match, or the user is not found, it returns `None`."
-      },
-      {
-        "type": "h2",
-        "text": "6️⃣ Step 4: `auth.login()` Creates the Session"
-      },
-      {
-        "type": "paragraph",
-        "text": "Once you have the authenticated `user` object, you establish the session to keep them logged in:"
-      },
-      {
-        "type": "code_block",
-        "text": "auth.login(request, user)"
-      },
-      {
-        "type": "list",
-        "text": "1. **Session Key Generation:** A unique session ID is generated."
-      },
-      {
-        "type": "list",
-        "text": "2. **Session Data Storage:** The authenticated user’s **Primary Key ID** is stored in the session data (e.g., in a database table or file)."
-      },
-      {
-        "type": "list",
-        "text": "3. **Cookie Creation:** A **Session Cookie** containing the unique session ID is set in the HTTP response headers. This cookie is what the browser sends with every subsequent request."
-      },
-      {
-        "type": "h2",
-        "text": "7️⃣ Step 5: The Logged-In State"
-      },
-      {
-        "type": "paragraph",
-        "text": "On every subsequent request, the **Session Middleware** reads the Session Cookie, loads the associated session data (including the user ID), and populates `request.user` with the corresponding `User` object. This is why you can simply check `if request.user.is_authenticated:`"
-      },
-      {
-        "type": "conclusion",
-        "text": "✅ **Conclusion:** `authenticate()` verifies the credentials against the database hash, and `login()` establishes the session by storing the user ID and sending a session cookie to the client. This two-step process is the standard, secure way to handle login in Django."
+        "text": "It ensures security, saves time, integrates with sessions, and provides a standard API."
       }
-    ],
+    ]
   },
   {
     "id": 7,
@@ -1095,8 +1026,145 @@
         "type": "conclusion",
         "text": "✅ **Conclusion:** The Java Virtual Machine allows compiled Java bytecode to run across any operating system, ensuring maximum portability and stability."
       }
-    ],
-  },
-]; // Component to display a single blog post const BlogPost = ({ post }) => { // Function to manually render <ul> for consecutive list items const renderContent = (content) => { const elements = []; let i = 0; while (i < content.length) { const item = content[i]; if (item.type === 'list') { // Start a new <ul> for consecutive list items const listItems = []; let j = i; while (j < content.length && content[j].type === 'list') { listItems.push(content[j]); j++; } elements.push( <ul key={i} className="space-y-2 pl-5"> {listItems.map((listItem, liIndex) => ( <ContentRenderer key={liIndex} contentItem={listItem} /> ))} </ul> ); i = j; // Move index past the processed list items } else { // Render non-list items directly elements.push(<ContentRenderer key={i} contentItem={item} />); i++; } } return elements; }; // The BlogPost component renders the post title, date, and body return ( <article className="py-8"> <h1 className="text-2xl font-extrabold text-indigo-800 hover:text-indigo-600 transition-colors cursor-pointer"> {post.title} </h1> <p className="text-sm text-gray-500 mb-4">{post.date}</p> <div className="space-y-4"> {renderContent(post.content)} </div> <div className="mt-4 flex flex-wrap gap-2"> {post.tags.map(tag => ( <span key={tag} className="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-2.5 py-0.5 rounded-full"> {tag} </span> ))} </div> </article> ); }; // Component for the filter buttons const FilterButton = ({ tag, filterTag, setFilterTag }) => { const isActive = tag === filterTag; const baseClasses = "text-base font-semibold py-2 px-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"; const activeClasses = "bg-indigo-600 text-white shadow-lg ring-indigo-500 ring-2 ring-offset-2"; const inactiveClasses = "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"; // Map the button text based on the tag const buttonText = tag === 'All' ? 'All Concepts' : tag; return ( <button onClick={() => setFilterTag(tag)} className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`} > {buttonText} </button> ); }; // Main App Component const App = () => { // Default filter is 'All' const [filterTag, setFilterTag] = useState('All'); // Logic to filter posts based on the selected tag const filteredPosts = postsData.filter(post => { if (filterTag === 'All') { return true; } // Checks if the post's tags include the filterTag return post.tags.includes(filterTag); }); const availableTags = ['All', ...new Set(postsData.flatMap(post => post.tags))]; return ( <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> {/* Header/Title */} <header className="py-6 border-b border-indigo-200"> <h1 className="text-4xl font-extrabold text-indigo-700 tracking-tight">My Learning Journal</h1> </header> <main className="py-12"> {/* Tag Filter Buttons */} <div className="flex flex-wrap gap-3 mb-10"> {availableTags.map(tag => ( <FilterButton key={tag} tag={tag} filterTag={filterTag} setFilterTag={setFilterTag} /> ))} </div> {/* Heading adjusts based on filter */} <h2 className="text-4xl font-extrabold text-gray-800 mb-10 border-b-4 border-indigo-500 inline-block pb-1"> {filterTag === 'All' ? 'Latest Concepts' : `${filterTag} Concepts`} </h2> {/* List of Posts */} <div className="divide-y divide-gray-200"> {filteredPosts.length > 0 ? ( filteredPosts.map((post) => ( <BlogPost key={post.id} post={post} /> )) ) : ( <p className="text-xl text-gray-500 italic mt-8">No posts found for the selected category. Try selecting 'All Concepts'.</p> )} </div> {/* Footer */} <footer className="mt-12 text-center text-gray-500 text-sm py-4 border-t"> <p>&copy; 2025 Learning Journal. Built with React and Tailwind CSS.</p> </footer> </main> </div> ); }; // Render the App component const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />); </script>
+    ]
+  }
+]; // The closing bracket for the postsData array was the main syntax issue.
+
+// Component to display a single blog post
+const BlogPost = ({ post }) => {
+    // Function to manually render <ul> for consecutive list items
+    const renderContent = (content) => {
+        const elements = [];
+        let i = 0;
+        while (i < content.length) {
+            const item = content[i];
+            if (item.type === 'list') {
+                // Start a new <ul> for consecutive list items
+                const listItems = [];
+                let j = i;
+                while (j < content.length && content[j].type === 'list') {
+                    listItems.push(content[j]);
+                    j++;
+                }
+                elements.push(
+                    <ul key={i} className="space-y-2 pl-5">
+                        {listItems.map((listItem, liIndex) => (
+                            <ContentRenderer key={liIndex} contentItem={listItem} />
+                        ))}
+                    </ul>
+                );
+                i = j; // Move index past the processed list items
+            } else {
+                // Render non-list items directly
+                elements.push(<ContentRenderer key={i} contentItem={item} />);
+                i++;
+            }
+        }
+        return elements;
+    };
+
+    // The BlogPost component renders the post title, date, and body
+    return (
+        <article className="py-8">
+            <h1 className="text-2xl font-extrabold text-indigo-800 hover:text-indigo-600 transition-colors cursor-pointer">
+                {post.title}
+            </h1>
+            <p className="text-sm text-gray-500 mb-4">{post.date}</p>
+            <div className="space-y-4">
+                {renderContent(post.content)}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+                {post.tags.map(tag => (
+                    <span key={tag} className="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                        {tag}
+                    </span>
+                ))}
+            </div>
+        </article>
+    );
+};
+
+// Component for the filter buttons
+const FilterButton = ({ tag, filterTag, setFilterTag }) => {
+    const isActive = tag === filterTag;
+    const baseClasses = "text-base font-semibold py-2 px-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+    const activeClasses = "bg-indigo-600 text-white shadow-lg ring-indigo-500 ring-2 ring-offset-2";
+    const inactiveClasses = "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100";
+
+    // Map the button text based on the tag
+    const buttonText = tag === 'All' ? 'All Concepts' : tag;
+
+    return (
+        <button
+            onClick={() => setFilterTag(tag)}
+            className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
+        >
+            {buttonText}
+        </button>
+    );
+};
+
+
+// Main App Component
+const App = () => {
+    // Default filter is 'All'
+    const [filterTag, setFilterTag] = useState('All');
+
+    // Logic to filter posts based on the selected tag
+    const filteredPosts = postsData.filter(post => {
+        if (filterTag === 'All') {
+            return true;
+        }
+        // Checks if the post's tags include the filterTag
+        return post.tags.includes(filterTag);
+    });
+
+    const availableTags = ['All', ...new Set(postsData.flatMap(post => post.tags))];
+
+    return (
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* Header/Title */}
+            <header className="py-6 border-b border-indigo-200">
+                <h1 className="text-4xl font-extrabold text-indigo-700 tracking-tight">My Learning Journal</h1>
+            </header>
+
+            <main className="py-12">
+                {/* Tag Filter Buttons */}
+                <div className="flex flex-wrap gap-3 mb-10">
+                    {availableTags.map(tag => (
+                        <FilterButton key={tag} tag={tag} filterTag={filterTag} setFilterTag={setFilterTag} />
+                    ))}
+                </div>
+
+                {/* Heading adjusts based on filter */}
+                <h2 className="text-4xl font-extrabold text-gray-800 mb-10 border-b-4 border-indigo-500 inline-block pb-1">
+                    {filterTag === 'All' ? 'Latest Concepts' : `${filterTag} Concepts`}
+                </h2>
+
+                {/* List of Posts */}
+                <div className="divide-y divide-gray-200">
+                    {filteredPosts.length > 0 ? (
+                        filteredPosts.map((post) => (
+                            <BlogPost key={post.id} post={post} />
+                        ))
+                    ) : (
+                        <p className="text-xl text-gray-500 italic mt-8">No posts found for the selected category. Try selecting 'All Concepts'.</p>
+                    )}
+                </div>
+                
+                {/* Footer */}
+                <footer className="mt-12 text-center text-gray-500 text-sm py-4 border-t">
+                    <p>&copy; 2025 Learning Journal. Built with React and Tailwind CSS.</p>
+                </footer>
+            </main>
+        </div>
+    );
+};
+
+// Render the App component
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
+    </script>
 </body>
 </html>
