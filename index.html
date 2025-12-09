@@ -872,7 +872,7 @@
     "id": 8,
     "title": "Mastering Serializers & API Flow: The Complete Django REST Guide",
     "date": "December 9, 2025",
-    "tags": ["Django", "DRF", "API-Flow", "Serialization", "Deserialization", "Deep Dive"],
+    "tags": ["Django", "DRF", "API-Flow", "Serialization", "Deserialization"],
     "content": [
         { "type": "paragraph", "text": "This guide consolidates the entire process of how a request flows through a Django REST Framework (DRF) application, focusing heavily on the pivotal role of the **Serializer**. It breaks down every file, line of code, and concept we discussed, ensuring you become a **boss of serialization and validation**." },
 
@@ -944,7 +944,7 @@
         { "type": "h3", "Question": "Who converts the data into JSON? Is it `JsonResponse` or `serializer.data`?", "text": "The final conversion from Python data structure to JSON text is the job of **`JsonResponse`**." },
         { "type": "list", "text": "**`serializer.data`:** Outputs a **Python dictionary** (or list of dictionaries). This is the *prepared* data for JSON."},
         { "type": "list", "text": "**`JsonResponse`:** Takes the Python dictionary, uses the underlying `json` library to convert it into a final **JSON text string**, sets the `Content-Type: application/json` header, and creates the HTTP response body."},
-        { "type": "flow", "text": "Model Object $\xrightarrow{\text{Serializer}}$ Python Dictionary $\xrightarrow{\text{JsonResponse}}$ JSON Text $\xrightarrow{\text{HTTP}}$ Client" },
+        { "type": "flow", "text": "Model Object $\rightarrow{\text{Serializer}}$ Python Dictionary $\rightarrow{\text{JsonResponse}}$ JSON Text $\xrightarrow{\text{HTTP}}$ Client" },
 
         { "type": "h3", "Question": "Why don't we use `JSONRenderer().render(serializer.data)` in `views.py`?", "text": "Because `JSONRenderer` produces a low-level **byte string** (`b'{...}'`), which is not a complete HTTP response object. **`JsonResponse`** handles the encoding, packaging, and header setting automatically and is the correct choice for Django function views." },
         
