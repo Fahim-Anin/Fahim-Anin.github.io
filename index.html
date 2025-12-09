@@ -35,6 +35,15 @@
                 case 'h3':
                     return <h4 className="text-xl font-bold text-indigo-700 mt-4 mb-2">{text}</h4>;
                 
+                // Question/Answer Block (NEW: Added to handle Q/A structure)
+                case 'question_answer':
+                    return (
+                        <div className="p-4 my-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg shadow-sm">
+                            <h4 className="text-xl font-extrabold text-yellow-800 mb-2">Q: {contentItem.question_text}</h4>
+                            <p className="text-gray-700 leading-relaxed text-lg">{contentItem.text}</p>
+                        </div>
+                    );
+
                 // Highlighted HTTP Request Line (Green Banner)
                 case 'request':
                     return (
@@ -623,18 +632,6 @@
         "text": "**`.exists()`:** The method that finally executes the query against the database."
       },
       {
-        "type": "h3",
-        "text": "The Optimized SQL Behind the Scenes"
-      },
-      {
-        "type": "paragraph",
-        "text": "The ORM optimizes `.exists()` to only fetch the minimum data required. It translates to highly optimized SQL that stops after finding the first match:"
-      },
-      {
-        "type": "code_block",
-        "text": "SELECT (1) FROM auth_user WHERE username='john' LIMIT 1;"
-      },
-      {
         "type": "key_insight",
         "text": "By adding `LIMIT 1`, the database avoids scanning the entire table, making this check extremely fast. The result is converted simply to a Python `True` or `False`."
       },
@@ -913,6 +910,13 @@
         
         { "type": "paragraph", "text": "Let's track a piece of data (e.g., `{\"title\": \"Quick Sort\", ...}`) from input to the database." },
 
+        { "type": "question_answer", "question_text": "After binding data with `serializer = SnippetSerializer(data=data)`, where is the validation value passed, and how is the `create()` method called?", "text": "The validation logic is internal to the base `serializers.Serializer` class, inherited by `SnippetSerializer`." },
+        { "type": "list", "text": "1. **Instantiation:** `SnippetSerializer(data=data)` saves the Python dictionary input as `self.initial_data`."},
+        { "type": "list", "text": "2. **Validation Trigger:** **`serializer.is_valid()`** explicitly runs all checks (field types, `max_length`, `choices`, etc.) against `self.initial_data`."},
+        { "type": "list", "text": "3. **Output:** If valid, the clean data is moved to **`serializer.validated_data`**."},
+        { "type": "list", "text": "4. **Persistence:** **`serializer.save()`** checks if an instance exists. Since we only passed `data=...` (POST), it determines a new instance is needed and automatically calls `self.create(validated_data)`."},
+        { "type": "code_block", "text": "# Inside serializers.py's create()\nreturn Snippet.objects.create(**validated_data) # Uses validated data to execute the SQL INSERT statement." },
+        
         { "type": "h3", "text": "Full Validation Logic (Triggered by `serializer.is_valid()`)" },
         { "type": "list", "text": "1. **Initial Data Check:** The serializer checks if the incoming data (`self.initial_data`) contains all required fields (e.g., `code`)."},
         { "type": "list", "text": "2. **Field Validation:** It iterates through every field defined in `SnippetSerializer` and runs the specific checks (e.g., confirming `title` is a string and is less than 100 characters)."},
@@ -921,7 +925,7 @@
         
         { "type": "h3", "text": "The `serializer.save()` and `create()` Flow" },
         
-        { "type": "Question", "text": "How is the `create()` method called, and how does it save the data?", "text": "The magic is in the `save()` method, which decides whether to create a new object or update an existing one."},
+        { "type": "question_answer", "question_text": "How is the `create()` method called, and how does it save the data?", "text": "The magic is in the `save()` method, which decides whether to create a new object or update an existing one."},
         
         { "type": "code_block", "text": "# 1. Inside views.py:\nif serializer.is_valid():\n    serializer.save() # This is where the decision is made." },
         
@@ -934,29 +938,29 @@
 
         { "type": "h2", "📢 Final Response: Why Return `serializer.data`?" },
         
-        { "type": "h3", "Question": "If the data is saved, why do we return the data to the browser (client)?", "text": "Returning `serializer.data` on a successful POST (`status=201`) is essential for API contract and functionality:" },
+        { "type": "question_answer", "question_text": "If the data is saved, why do we return the data to the browser (client)?", "text": "Returning `serializer.data` on a successful POST (`status=201`) is essential for API contract and functionality:" },
         { "type": "list", "text": "**ID Retrieval:** The client immediately needs the **unique ID** (Primary Key) assigned by the database to the new resource (e.g., `id: 5`) for future requests."},
         { "type": "list", "text": "**Data Integrity:** It returns all **server-generated data** (ID, `created` timestamp) and **default values** (`linenos: false`), providing the client with the complete, official object state."},
         { "type": "list", "text": "**REST Compliance:** It follows the standard practice for successful resource creation." },
         
         { "type": "h2", "🌐 JSON Conversion: Serializer vs. JsonResponse" },
         
-        { "type": "h3", "Question": "Who converts the data into JSON? Is it `JsonResponse` or `serializer.data`?", "text": "The final conversion from Python data structure to JSON text is the job of **`JsonResponse`**." },
+        { "type": "question_answer", "question_text": "Who converts the data into JSON? Is it `JsonResponse` or `serializer.data`?", "text": "The final conversion from Python data structure to JSON text is the job of **`JsonResponse`**." },
         { "type": "list", "text": "**`serializer.data`:** Outputs a **Python dictionary** (or list of dictionaries). This is the *prepared* data for JSON."},
         { "type": "list", "text": "**`JsonResponse`:** Takes the Python dictionary, uses the underlying `json` library to convert it into a final **JSON text string**, sets the `Content-Type: application/json` header, and creates the HTTP response body."},
         { "type": "flow", "text": "Model Object $\rightarrow{\text{Serializer}}$ Python Dictionary $\rightarrow{\text{JsonResponse}}$ JSON Text $\xrightarrow{\text{HTTP}}$ Client" },
 
-        { "type": "h3", "Question": "Why don't we use `JSONRenderer().render(serializer.data)` in `views.py`?", "text": "Because `JSONRenderer` produces a low-level **byte string** (`b'{...}'`), which is not a complete HTTP response object. **`JsonResponse`** handles the encoding, packaging, and header setting automatically and is the correct choice for Django function views." },
+        { "type": "question_answer", "question_text": "Why don't we use `JSONRenderer().render(serializer.data)` in `views.py`?", "text": "Because `JSONRenderer` produces a low-level **byte string** (`b'{...}'`), which is not a complete HTTP response object. **`JsonResponse`** handles the encoding, packaging, and header setting automatically and is the correct choice for Django function views." },
         
         { "type": "h2", "🔑 The `safe=False` Requirement (GET Method)" },
         
         { "type": "code_block", "text": "return JsonResponse(serializer.data, safe=False)" },
         
-        { "type": "h3", "Question": "Why is `safe=False` needed here?", "text": "This is required because of a **Django security constraint**:" },
+        { "type": "question_answer", "question_text": "Why is `safe=False` needed here?", "text": "This is required because of a **Django security constraint**:" },
         { "type": "list", "text": "**Default (`safe=True`):** `JsonResponse` restricts the top-level output structure to a **Python dictionary** (`{...}`)."},
         { "type": "list", "text": "**GET Output:** When listing all snippets (`many=True`), `serializer.data` returns a **Python list** (`[...]`), violating the default constraint."},
         { "type": "list", "text": "**The Fix:** Setting `safe=False` explicitly tells Django, \"I am returning an array/list as the top-level structure, and I confirm it is safe to proceed,\" preventing a `TypeError`."}
-    ],
+    ]
 },
 
 {
