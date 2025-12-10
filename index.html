@@ -958,13 +958,13 @@
         "type": "conclusion",
         "text": "✅ **Conclusion:** DRF views handle routing and HTTP methods. The Serializer handles the crucial steps of **Parsing/Conversion** (JSON to Dict), **Validation** (checking rules), and **Persistence** (`.save()` to the ORM/DB)."
       }
-    ],
+    ]
   },
         {
     "id": 9,
     "title": "Deciphering Class-Based Views: The APIView, as_view(), and Dispatch Flow",
-    "date": "December 9, 2025",
-    "tags": ["Django", "DRF", "Class-Based Views", "APIView", "Request-Response"],
+    "date": "December 10, 2025",
+    "tags": ["Django", "DRF", "API-Flow", "Serialization", "Deserialization"],
     "content": [
         { "type": "paragraph", "text": "This guide breaks down the core mechanism of how Django REST Framework (DRF) converts an HTTP Request into a Python Class Method call using the **`APIView`** and its key helper methods. Understanding this flow is the key to mastering DRF." },
 
@@ -1035,7 +1035,7 @@
         { "type": "list", "text": "**`dispatch()`:** Sees `request.method == 'POST'` and calls **`instance.post(request, format=None)`**."},
         { "type": "list", "text": "**Your Code:** `post` runs. It accesses input data via **`request.data`** (automatically parsed from JSON). It validates and saves the new object."},
         { "type": "list", "text": "**Output:** HTTP 201 Created with the full JSON object (including the new `id`)."}
-    ],
+    ]
 },  
             
   {
