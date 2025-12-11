@@ -1202,6 +1202,156 @@
     }
   ]
 }
+
+            {
+  "id": 12,
+  "title": "🛠 Django REST Framework ViewSets and Routers Explained",
+  "date": "December 11, 2025",
+  "tags": ["Django", "DRF", "ViewSet", "Router", "API", "REST"],
+  "content": [
+    {
+      "type": "h1",
+      "text": "Understanding ViewSets in Django REST Framework"
+    },
+    {
+      "type": "paragraph",
+      "text": "In Django REST Framework (DRF), ViewSets are an abstraction layer that allows developers to focus on modeling API state and behavior instead of manually wiring URLs and HTTP methods. This post explains what ViewSets are, why we need them, and how they work in depth."
+    },
+    {
+      "type": "h2",
+      "text": "1️⃣ Why we need ViewSets"
+    },
+    {
+      "type": "paragraph",
+      "text": "Without ViewSets, you would have to create separate views for each action (list, create, retrieve, update, destroy) for every model. This causes:"
+    },
+    {
+      "type": "list",
+      "text": "Code repetition – the same CRUD logic is written for each model."
+    },
+    {
+      "type": "list",
+      "text": "Complex URL configuration – every action needs a separate URL pattern."
+    },
+    {
+      "type": "list",
+      "text": "Difficulty in scaling – adding a new model requires multiple views and URLs manually."
+    },
+    {
+      "type": "paragraph",
+      "text": "ViewSets solve these problems by grouping all common actions into a single class and automatically mapping actions to URLs using a Router."
+    },
+    {
+      "type": "h2",
+      "text": "2️⃣ Significance of ViewSets"
+    },
+    {
+      "type": "list",
+      "text": "Automatic CRUD operations (list, create, retrieve, update, destroy)."
+    },
+    {
+      "type": "list",
+      "text": "Consistent URL patterns, reducing manual errors."
+    },
+    {
+      "type": "list",
+      "text": "Scalable design for multiple models and APIs."
+    },
+    {
+      "type": "list",
+      "text": "Easily add custom actions using the @action decorator."
+    },
+    {
+      "type": "list",
+      "text": "Reduces repetitive code and improves maintainability."
+    },
+    {
+      "type": "h2",
+      "text": "3️⃣ How ViewSets Work"
+    },
+    {
+      "type": "paragraph",
+      "text": "A ViewSet is a class that defines actions (methods) for a model, but it is not bound to HTTP methods directly until a Router converts it into concrete views."
+    },
+    {
+      "type": "h3",
+      "text": "3.1 ModelViewSet vs ReadOnlyModelViewSet"
+    },
+    {
+      "type": "list",
+      "text": "ModelViewSet – full CRUD operations: list, create, retrieve, update, partial_update, destroy."
+    },
+    {
+      "type": "list",
+      "text": "ReadOnlyModelViewSet – read-only operations: list and retrieve only."
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose ReadOnlyModelViewSet for APIs that should not allow modifications, like public user data or reference resources."
+    },
+    {
+      "type": "h3",
+      "text": "3.2 Custom actions using @action decorator"
+    },
+    {
+      "type": "paragraph",
+      "text": "You can define custom endpoints that do not fit standard CRUD operations using the @action decorator."
+    },
+    {
+      "type": "code_block",
+      "text": "from rest_framework.decorators import action\nfrom rest_framework.response import Response\n\nclass SnippetViewSet(viewsets.ModelViewSet):\n    @action(detail=True, methods=['get'], renderer_classes=[renderers.StaticHTMLRenderer])\n    def highlight(self, request, *args, **kwargs):\n        snippet = self.get_object()\n        return Response(snippet.highlighted)"
+    },
+    {
+      "type": "paragraph",
+      "text": "Here, 'highlight' is a custom action available at /snippets/<id>/highlight/ and responds to GET requests by default."
+    },
+    {
+      "type": "h3",
+      "text": "3.3 How Router works"
+    },
+    {
+      "type": "paragraph",
+      "text": "Routers automatically generate URL patterns for ViewSets. You just register a ViewSet with a Router and DRF handles the URL mapping."
+    },
+    {
+      "type": "code_block",
+      "text": "from rest_framework.routers import DefaultRouter\nfrom snippets import views\n\nrouter = DefaultRouter()\nrouter.register(r'snippets', views.SnippetViewSet, basename='snippet')\nrouter.register(r'users', views.UserViewSet, basename='user')\n\nurlpatterns = [\n    path('', include(router.urls)),\n]"
+    },
+    {
+      "type": "paragraph",
+      "text": "The Router generates endpoints like:\n- GET /snippets/ → list\n- POST /snippets/ → create\n- GET /snippets/<id>/ → retrieve\n- PUT/PATCH /snippets/<id>/ → update\n- DELETE /snippets/<id>/ → destroy\n- GET /snippets/<id>/highlight/ → custom action"
+    },
+    {
+      "type": "h3",
+      "text": "3.4 Permissions with ViewSets"
+    },
+    {
+      "type": "paragraph",
+      "text": "You can apply both **global** and **object-level** permissions to ViewSets. For example, using IsAuthenticatedOrReadOnly combined with IsOwnerOrReadOnly ensures that only authenticated users can create objects, and only the owner can modify their object."
+    },
+    {
+      "type": "code_block",
+      "text": "class SnippetViewSet(viewsets.ModelViewSet):\n    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]"
+    },
+    {
+      "type": "h2",
+      "text": "4️⃣ Real-world use case"
+    },
+    {
+      "type": "paragraph",
+      "text": "Imagine a **code sharing platform** where multiple developers post code snippets. Everyone can read all snippets, but only the owner can edit or delete their snippet. Using a ModelViewSet with object-level permissions ensures this with minimal code and consistent URLs."
+    },
+    {
+      "type": "key_insight",
+      "text": "ViewSets + Routers + Permissions provide a clean, scalable, and secure way to manage API endpoints without manually writing repetitive views and URL patterns."
+    },
+    {
+      "type": "conclusion",
+      "text": "✅ **Conclusion:** DRF ViewSets simplify API development by handling CRUD operations automatically, allowing for custom actions, and integrating seamlessly with routers and permissions. They reduce boilerplate, enforce consistency, and make scaling APIs easier."
+    }
+  ]
+}
+
         
             
 ]; // The closing bracket for the postsData array was the main syntax issue.
